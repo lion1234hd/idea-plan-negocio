@@ -18,28 +18,31 @@ if api_key and capital_inicial > 0 and tiempo_retorno >= 1:
     # Título de la aplicación
     st.title("Generador de Plan de Negocio")
 
-    # Crear un formulario para recopilar información del usuario
-    st.header("Ingresa la información del negocio:")
-    idea_negocio = st.text_area("Describe tu idea de negocio:")
+    # Generar una idea de negocio utilizando GPT-3 de OpenAI
+    st.header("Sugerencia de Idea de Negocio:")
+    try:
+        respuesta_gpt3_idea = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt="Genera una idea de negocio innovadora y factible.",
+            max_tokens=100
+        )
+        idea_negocio = respuesta_gpt3_idea.choices[0].text.strip()
+        st.write(idea_negocio)
+    except Exception as e:
+        st.error("Se produjo un error al generar la idea de negocio. Verifica tu clave de API y vuelve a intentarlo.")
 
-    # Botón para generar el plan de negocio
-    if st.button("Generar Plan de Negocio"):
-        # Combinar la información del usuario en un solo texto
-        informacion_usuario = f"**Idea de Negocio:**\n{idea_negocio}\n\n" \
-                              f"**Capital Inicial:** {capital_inicial} dólares\n" \
-                              f"**Tiempo de Retorno:** {tiempo_retorno} meses\n\n"
+    # Analizar la idea de negocio utilizando GPT-3 de OpenAI
+    st.header("Análisis de la Idea de Negocio:")
+    try:
+        respuesta_gpt3_analisis = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"Analiza la idea de negocio: '{idea_negocio}'",
+            max_tokens=2500
+        )
+        analisis_negocio = respuesta_gpt3_analisis.choices[0].text.strip()
+        st.write(analisis_negocio)
+    except Exception as e:
+        st.error("Se produjo un error al analizar la idea de negocio. Verifica tu clave de API y vuelve a intentarlo.")
 
-        # Generar el plan de negocio utilizando GPT-3 de OpenAI
-        try:
-            respuesta_gpt3 = openai.Completion.create(
-                engine="text-davinci-003",
-                prompt=informacion_usuario,
-                max_tokens=2500  # Aumentar si es necesario
-            )
-            st.subheader("Plan de Negocio Generado:")
-            st.write(respuesta_gpt3.choices[0].text)
-        except Exception as e:
-            st.error("Se produjo un error al generar el plan de negocio. Verifica tu clave de API y vuelve a intentarlo.")
 else:
-    st.warning("Por favor, completa la configuración de API y la información del negocio en el panel izquierdo.")
-
+    st.warning("Por favor, completa la configuración de API, el capital inicial y el tiempo de retorno en el panel izquierdo.")
