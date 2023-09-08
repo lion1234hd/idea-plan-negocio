@@ -34,7 +34,7 @@ if api_key and capital_inicial > 0 and tiempo_retorno >= 1:
             respuesta_gpt3 = openai.Completion.create(
                 engine="text-davinci-003",
                 prompt=informacion_usuario,
-                max_tokens=500  # Aumentar si es necesario
+                max_tokens=2500  # Aumentar si es necesario
             )
             st.subheader("Plan de Negocio Generado:")
             st.write(respuesta_gpt3.choices[0].text)
