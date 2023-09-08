@@ -6,9 +6,9 @@ def analizar_factibilidad(idea_negocio, capital_inicial, tiempo_retorno):
     # Analizar la factibilidad utilizando GPT-3 de OpenAI
     try:
         respuesta_gpt3_factibilidad = openai.Completion.create(
-            engine="text-davinci-002",
+            engine="text-davinci-003",
             prompt=f"Analiza la factibilidad de la siguiente idea de negocio:\n\n'{idea_negocio}'\n\nCapital Inicial: ${capital_inicial}\nTiempo de Retorno Esperado: {tiempo_retorno} meses.",
-            max_tokens=500
+            max_tokens=1000
         )
         factibilidad = respuesta_gpt3_factibilidad.choices[0].text.strip()
         return factibilidad
@@ -21,7 +21,7 @@ def generar_plan_negocios(idea_negocio):
     # Generar un plan de negocios completo utilizando GPT-3 de OpenAI
     try:
         respuesta_gpt3_plan_negocios = openai.Completion.create(
-            engine="text-davinci-002",
+            engine="text-davinci-003",
             prompt=f"Desarrolla un plan de negocios completo para la siguiente idea de negocio:\n\n'{idea_negocio}'",
             max_tokens=3000
         )
