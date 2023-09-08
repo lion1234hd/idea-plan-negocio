@@ -1,14 +1,29 @@
 import streamlit as st
 import openai
 
+# Función para analizar la factibilidad de la idea de negocio
+def analizar_factibilidad(idea_negocio, capital_inicial, tiempo_retorno):
+    # Analizar la factibilidad utilizando GPT-3 de OpenAI
+    try:
+        respuesta_gpt3_factibilidad = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt=f"Analiza la factibilidad de la siguiente idea de negocio:\n\n'{idea_negocio}'\n\nCapital Inicial: ${capital_inicial}\nTiempo de Retorno Esperado: {tiempo_retorno} meses.",
+            max_tokens=500
+        )
+        factibilidad = respuesta_gpt3_factibilidad.choices[0].text.strip()
+        return factibilidad
+    except Exception as e:
+        st.error("Se produjo un error al analizar la factibilidad. Verifica tu clave de API y vuelve a intentarlo.")
+        return ""
+
 # Función para generar un plan de negocios completo
-def generar_plan_negocios(idea_negocio, capital_inicial, tiempo_retorno):
+def generar_plan_negocios(idea_negocio):
     # Generar un plan de negocios completo utilizando GPT-3 de OpenAI
     try:
         respuesta_gpt3_plan_negocios = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"Desarrolla un plan de negocios completo para la siguiente idea de negocio:\n\n'{idea_negocio}'\n\nCapital Inicial: ${capital_inicial}\nTiempo de Retorno Esperado: {tiempo_retorno} meses.",
-            max_tokens=2000
+            prompt=f"Desarrolla un plan de negocios completo para la siguiente idea de negocio:\n\n'{idea_negocio}'",
+            max_tokens=3000
         )
         plan_negocios_completo = respuesta_gpt3_plan_negocios.choices[0].text.strip()
         return plan_negocios_completo
@@ -20,34 +35,38 @@ def generar_plan_negocios(idea_negocio, capital_inicial, tiempo_retorno):
 st.sidebar.header("Configuración de API")
 api_key = st.sidebar.text_input("Clave de API de OpenAI", type="password")
 
-# Configurar el capital inicial y el tiempo de retorno
-st.sidebar.header("Configuración del Negocio")
-capital_inicial = st.sidebar.number_input("Capital Inicial (en dólares)", min_value=0)
-tiempo_retorno = st.sidebar.number_input("Tiempo de Retorno Esperado (en meses)", min_value=1)
-
 # Permitir al usuario ingresar su propia idea de negocio
 st.sidebar.header("Ingresar Idea de Negocio")
 idea_negocio = st.sidebar.text_area("Ingresa tu Idea de Negocio")
 
-# Verificar si se ha ingresado una clave de API válida y se han proporcionado valores para capital inicial, tiempo de retorno y una idea de negocio
-if api_key and capital_inicial > 0 and tiempo_retorno >= 1 and idea_negocio:
+# Configurar el capital inicial y el tiempo de retorno si la idea es factible
+capital_inicial = 0
+tiempo_retorno = 0
+
+# Verificar si se ha ingresado una clave de API válida y una idea de negocio
+if api_key and idea_negocio:
     # Inicializar la API de OpenAI
     openai.api_key = api_key
 
     # Título de la aplicación
-    st.title("Generador de Plan de Negocios Completo")
+    st.title("Analizador de Idea de Negocio")
 
-    # Mostrar la idea de negocio ingresada por el usuario
-    st.header("Idea de Negocio:")
-    st.write(idea_negocio)
+    # Botón para analizar la factibilidad de la idea de negocio
+    if st.button("Analizar Factibilidad"):
+        factibilidad = analizar_factibilidad(idea_negocio, capital_inicial, tiempo_retorno)
 
-    # Botón para generar un plan de negocios completo
-    if st.button("Generar Plan de Negocios Completo"):
-        plan_negocios_completo = generar_plan_negocios(idea_negocio, capital_inicial, tiempo_retorno)
+        # Mostrar la factibilidad de la idea de negocio
+        st.header("Factibilidad de la Idea de Negocio:")
+        st.write(factibilidad)
 
-        # Mostrar el plan de negocios completo
-        st.header("Plan de Negocios Completo:")
-        st.write(plan_negocios_completo)
+        # Si es factible, generar un plan de negocios completo
+        if "factible" in factibilidad.lower():
+            # Generar un plan de negocios completo
+            plan_negocios_completo = generar_plan_negocios(idea_negocio)
+
+            # Mostrar el plan de negocios completo
+            st.header("Plan de Negocios Completo:")
+            st.write(plan_negocios_completo)
 
 else:
-    st.warning("Por favor, completa la configuración de API, el capital inicial, el tiempo de retorno y proporciona una idea de negocio en el panel izquierdo.")
+    st.warning("Por favor, completa la configuración de API y proporciona una idea de negocio en el panel izquierdo.")
