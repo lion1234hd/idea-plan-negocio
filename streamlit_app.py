@@ -21,48 +21,20 @@ if api_key and capital_inicial > 0 and tiempo_retorno >= 1:
     # Crear un formulario para recopilar información del usuario
     st.header("Ingresa la información del negocio:")
     idea_negocio = st.text_area("Describe tu idea de negocio:")
-    
-    # Análisis de mercado
-    st.header("1. Análisis de Mercado:")
-    st.write("Identificar tamaño del mercado, competidores, tendencias y oportunidades.")
-    analisis_mercado = st.text_area("Análisis de Mercado:")
-    
-    # Estrategias de marketing
-    st.header("2. Estrategias de Marketing:")
-    st.write("Definición de cómo atraer y retener clientes.")
-    estrategias_marketing = st.text_area("Estrategias de Marketing:")
-    
-    # Estructura organizacional
-    st.header("3. Estructura Organizacional:")
-    st.write("Describir la estructura de tu equipo y responsabilidades clave.")
-    estructura_organizacional = st.text_area("Estructura Organizacional:")
-    
-    # Proyecciones financieras
-    st.header("4. Proyecciones Financieras:")
-    st.write("Establecer expectativas de ingresos, costos y rentabilidad.")
-    proyecciones_financieras = st.text_area("Proyecciones Financieras:")
-    
-    # Plan de contingencia
-    st.header("5. Plan de Contingencia:")
-    st.write("Proponer soluciones a posibles problemas.")
-    plan_contingencia = st.text_area("Plan de Contingencia:")
 
     # Botón para generar el plan de negocio
     if st.button("Generar Plan de Negocio"):
-        # Combinar todos los datos ingresados por el usuario
-        plan_completo = f"**Idea de Negocio:**\n{idea_negocio}\n\n" \
-                        f"**1. Análisis de Mercado:**\n{analisis_mercado}\n\n" \
-                        f"**2. Estrategias de Marketing:**\n{estrategias_marketing}\n\n" \
-                        f"**3. Estructura Organizacional:**\n{estructura_organizacional}\n\n" \
-                        f"**4. Proyecciones Financieras:**\n{proyecciones_financieras}\n\n" \
-                        f"**5. Plan de Contingencia:**\n{plan_contingencia}\n\n"
+        # Combinar la información del usuario en un solo texto
+        informacion_usuario = f"**Idea de Negocio:**\n{idea_negocio}\n\n" \
+                              f"**Capital Inicial:** {capital_inicial} dólares\n" \
+                              f"**Tiempo de Retorno:** {tiempo_retorno} meses\n\n"
 
         # Generar el plan de negocio utilizando GPT-3 de OpenAI
         try:
             respuesta_gpt3 = openai.Completion.create(
-                engine="text-davinci-002",
-                prompt=plan_completo,
-                max_tokens=200
+                engine="text-davinci-003",
+                prompt=informacion_usuario,
+                max_tokens=500  # Aumentar si es necesario
             )
             st.subheader("Plan de Negocio Generado:")
             st.write(respuesta_gpt3.choices[0].text)
