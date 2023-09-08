@@ -39,9 +39,10 @@ api_key = st.sidebar.text_input("Clave de API de OpenAI", type="password")
 st.sidebar.header("Ingresar Idea de Negocio")
 idea_negocio = st.sidebar.text_area("Ingresa tu Idea de Negocio")
 
-# Configurar el capital inicial y el tiempo de retorno si la idea es factible
-capital_inicial = 0
-tiempo_retorno = 0
+# Configurar el capital inicial y el tiempo de retorno
+st.sidebar.header("Configuración del Negocio")
+capital_inicial = st.sidebar.number_input("Capital Inicial (en dólares)", min_value=0)
+tiempo_retorno = st.sidebar.number_input("Tiempo de Retorno Esperado (en meses)", min_value=1)
 
 # Verificar si se ha ingresado una clave de API válida y una idea de negocio
 if api_key and idea_negocio:
@@ -59,8 +60,13 @@ if api_key and idea_negocio:
         st.header("Factibilidad de la Idea de Negocio:")
         st.write(factibilidad)
 
+        # Si no es factible, proporcionar razones
+        if "factible" not in factibilidad.lower():
+            st.header("Razones por las que no es factible:")
+            st.write(factibilidad)
+
         # Si es factible, generar un plan de negocios completo
-        if "factible" in factibilidad.lower():
+        else:
             # Generar un plan de negocios completo
             plan_negocios_completo = generar_plan_negocios(idea_negocio)
 
